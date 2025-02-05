@@ -49,7 +49,8 @@ class SellerDetailSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(max_length=255)
     contact_info = serializers.CharField(max_length=255)
-    markets = MarketSerializer(many=True, read_only=True)
+    # markets = MarketSerializer(many=True, read_only=True)
+    markets = serializers.StringRelatedField(many=True)
 
 
 class SellerCreateSerializer(serializers.Serializer):

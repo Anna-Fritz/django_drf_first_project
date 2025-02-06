@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from market_app.models import Market, Seller
+from market_app.models import Market, Seller, Product
 
 
 # def validate_no_x(value):
@@ -70,3 +70,45 @@ class SellerCreateSerializer(serializers.Serializer):
         markets_new = Market.objects.filter(id__in=market_ids)
         seller.markets.set(markets_new)
         return seller
+
+
+class ProductDetailSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(max_length=255)
+    description = serializers.CharField()
+    price = serializers.DecimalField(max_digits=50, decimal_places=2)
+    market = MarketSerializer(read_only=True)
+    # market = serializers.StringRelatedField(read_only=True)
+    seller = SellerDetailSerializer(read_only=True)
+
+
+class ProductCreateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=255)
+    description = serializers.CharField()
+    price = serializers.DecimalField(max_digits=50, decimal_places=2)
+    market_id = serializers.IntegerField()
+    seller_id = serializers.IntegerField()
+
+    def validate_market_id(self, value):
+        market_id = Market.objects.filter(id=value)
+        if market_id:
+            return value
+        else:
+            raise serializers.ValidationError("Market not found")
+
+    def validate_seller_id(self, value):
+        seller_id = Seller.objects.filter(id=value)
+        if seller_id:
+            return value
+        else:
+            raise serializers.ValidationError("Seller not found")
+
+    def create(self, validated_data):
+        market_id = validated_data.pop("market_id")
+        seller_id = validated_data.pop("seller_id")
+
+        market = Market.objects.get(id=market_id)
+        seller = Seller.objects.get(id=seller_id)
+
+        product = Product.objects.create(market=market, seller=seller, **validated_data)
+        return product

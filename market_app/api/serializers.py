@@ -112,3 +112,12 @@ class ProductCreateSerializer(serializers.Serializer):
 
         product = Product.objects.create(market=market, seller=seller, **validated_data)
         return product
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.price = validated_data.get('price', instance.price)
+        instance.market_id = validated_data.get('market_id', instance.market_id)
+        instance.seller_id = validated_data.get('market_id', instance.seller_id)
+        instance.save()
+        return instance

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from market_app.models import Market, Seller, Product
+from django.urls import reverse
 
 
 # def validate_no_x(value):
@@ -49,9 +50,29 @@ def validate_no_x(value):       # usually validation of a serializer is outsourc
 
 class MarketSerializer(serializers.ModelSerializer):
 
+    sellers = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='seller_single')
+
     class Meta:
         model = Market
         fields = '__all__'
+
+
+# this MarketSerializer allows hyperlinked Name in Frontend:
+
+# class MarketSerializer(serializers.ModelSerializer):
+
+#     sellers = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = Market
+#         fields = '__all__'
+
+#     def get_sellers(self, obj):
+#         request = self.context.get('request')  # Request-Objekt for absolute URLs
+#         return [
+#             f'<a href="{request.build_absolute_uri(reverse("seller_single", args=[seller.id]))}">{seller.name}</a>'
+#             for seller in obj.sellers.all()
+#         ]
 
 
 class SellerSerializer(serializers.ModelSerializer):

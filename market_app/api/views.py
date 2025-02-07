@@ -12,7 +12,7 @@ def markets_view(request):
 
     if request.method == 'GET':
         markets = Market.objects.all()
-        serializer = MarketSerializer(markets, many=True)
+        serializer = MarketSerializer(markets, many=True, context={'request': request})
         return Response(serializer.data)
     
     if request.method == 'POST':
@@ -58,7 +58,7 @@ def sellers_view(request):
 
     if request.method == 'GET':
         sellers = Seller.objects.all()
-        serializer = SellerSerializer(sellers, many=True)
+        serializer = SellerSerializer(sellers, many=True, context={'request': request})
         return Response(serializer.data)
     
     if request.method == 'POST':
@@ -68,6 +68,14 @@ def sellers_view(request):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+        
+
+@api_view()
+def seller_single_view(request, pk):
+    if request.method == 'GET':
+        seller = Seller.objects.get(pk=pk)
+        serializer = SellerSerializer(seller, context={'request': request})
+        return Response(serializer.data)
 
 
 @api_view(['GET', 'POST'])
@@ -75,7 +83,7 @@ def products_view(request):
 
     if request.method == 'GET':
         products = Product.objects.all()
-        serializer = ProductDetailSerializer(products, many=True)
+        serializer = ProductDetailSerializer(products, many=True, context={'request': request})
         return Response(serializer.data)
     
     if request.method == 'POST':
@@ -93,7 +101,7 @@ def product_single_view(request, pk):
     if request.method == 'GET':
         try:
             product = Product.objects.get(pk=pk)
-            serializer = ProductDetailSerializer(product)
+            serializer = ProductDetailSerializer(product, context={'request': request})
             return Response(serializer.data)
         except Exception:
             return Response({"message": "Product not found"})

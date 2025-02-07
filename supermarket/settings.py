@@ -46,10 +46,28 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+
+  'http://127.0.0.1:5500',
+
+  'http://localhost:5500',
+
+]
+
+CORS_ALLOWED_ORIGINS = [
+
+  'http://127.0.0.1:5500',
+
+  'http://localhost:5500',
+
+]
+
 
 ROOT_URLCONF = 'supermarket.urls'
 

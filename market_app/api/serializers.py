@@ -63,9 +63,14 @@ class SellerSerializer(serializers.ModelSerializer):
         source='markets'
     )
 
+    market_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Seller
-        exclude = []
+        fields = ['id', 'name', 'market_id', 'market_count', 'markets', 'contact_info']
+
+    def get_market_count(self, obj):
+        return obj.markets.count()
 
 
 # The SellerSerializer replaces both SellerDetailSerializer and SellerCreateSerializer \

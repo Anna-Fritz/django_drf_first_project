@@ -57,6 +57,28 @@ class MarketSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# Additional solution for using Hyperlinks, but including rendering of their names
+
+# class MarketSerializer(serializers.ModelSerializer):
+
+#     sellers = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = Market
+#         fields = ['id', 'sellers', 'name', 'location', 'description', 'net_worth']
+
+#     def get_sellers(self, obj):
+#         """Returns seller names as clickable links."""
+#         request = self.context.get('request')  # Request-Objekt für absolute URLs
+#         return [
+#             {
+#                 "name": seller.name,
+#                 "url": request.build_absolute_uri(reverse("seller_single", args=[seller.id]))
+#             }
+#             for seller in obj.sellers.all()
+#         ]
+
+
 # this MarketSerializer allows hyperlinked Name in Frontend:
 
 # class MarketSerializer(serializers.ModelSerializer):

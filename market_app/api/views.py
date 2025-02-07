@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import MarketSerializer, SellerDetailSerializer, \
-    SellerCreateSerializer, ProductDetailSerializer, ProductCreateSerializer
+    SellerCreateSerializer, ProductDetailSerializer, ProductCreateSerializer, SellerSerializer
 from market_app.models import Market, Seller, Product
 from django.shortcuts import redirect
 
@@ -58,11 +58,11 @@ def sellers_view(request):
 
     if request.method == 'GET':
         sellers = Seller.objects.all()
-        serializer = SellerDetailSerializer(sellers, many=True)
+        serializer = SellerSerializer(sellers, many=True)
         return Response(serializer.data)
     
     if request.method == 'POST':
-        serializer = SellerCreateSerializer(data=request.data)
+        serializer = SellerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

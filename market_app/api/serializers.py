@@ -20,7 +20,9 @@ def validate_no_x(value):       # usually validation of a serializer is outsourc
 
     return value
 
+
 # MarketSerializer without ModelSerializer - Learning
+
 # class MarketSerializer(serializers.Serializer):
 #     id = serializers.IntegerField(read_only=True)
 #     name = serializers.CharField(max_length=255)
@@ -46,27 +48,28 @@ def validate_no_x(value):       # usually validation of a serializer is outsourc
 
 
 class MarketSerializer(serializers.ModelSerializer):
-    # id = serializers.IntegerField(read_only=True)
-    # name = serializers.CharField(max_length=255)
-    # location = serializers.CharField(max_length=255, validators=[validate_no_x])
-    # description = serializers.CharField(max_length=255)
-    # net_worth = serializers.DecimalField(max_digits=100, decimal_places=2)
-
-    # def create(self, validated_data):
-    #     return Market.objects.create(**validated_data)
-    
-    # def update(self, instance, validated_data):
-    #     instance.name = validated_data.get('name', instance.name)
-    #     instance.location = validated_data.get('location', instance.location)
-    #     instance.description = validated_data.get('description', instance.description)
-    #     instance.net_worth = validated_data.get('net_worth', instance.net_worth)
-    #     instance.save()
-    #     return instance
 
     class Meta:
         model = Market
         fields = '__all__'
 
+
+class SellerSerializer(serializers.ModelSerializer):
+    markets = MarketSerializer(many=True, read_only=True)
+    market_id = serializers.PrimaryKeyRelatedField(
+        queryset=Market.objects.all(),
+        many=True,
+        write_only=True,
+        source='markets'
+    )
+
+    class Meta:
+        model = Seller
+        exclude = []
+
+
+# The SellerSerializer replaces both SellerDetailSerializer and SellerCreateSerializer \
+# due to its powerful ModelSerializer options
 
 class SellerDetailSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
@@ -109,8 +112,8 @@ class ProductCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
     description = serializers.CharField()
     price = serializers.DecimalField(max_digits=50, decimal_places=2)
-    market_id = serializers.IntegerField()
-    seller_id = serializers.IntegerField()
+    market_id = serializers.IntegerField(write_only=True)
+    seller_id = serializers.IntegerField(write_only=True)
 
     def validate_market_id(self, value):
         market_id = Market.objects.filter(id=value)

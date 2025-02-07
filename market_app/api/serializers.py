@@ -22,6 +22,7 @@ def validate_no_x(value):       # usually validation of a serializer is outsourc
     return value
 
 
+
 # MarketSerializer without ModelSerializer - Learning
 
 # class MarketSerializer(serializers.Serializer):
@@ -48,6 +49,9 @@ def validate_no_x(value):       # usually validation of a serializer is outsourc
     #     return value
 
 
+
+# HyperlinkedRelatedField
+
 class MarketSerializer(serializers.ModelSerializer):
 
     sellers = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='seller_single')
@@ -57,7 +61,29 @@ class MarketSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# Additional solution for using Hyperlinks, but including rendering of their names
+class MarketHyperlinkedSerializer(MarketSerializer, serializers.HyperlinkedModelSerializer):
+    sellers = None
+
+    class Meta:
+        model = Market
+        fields = ['id', 'name', 'url', 'location', 'description', 'net_worth']
+
+
+
+# HyperlinkedModelSerializer: generates url key-value for each model automaticly, needs naming (name='name-detail') for url-path
+# and context={'request': request} as argument for Serializer in related view
+
+# class MarketSerializer(serializers.HyperlinkedModelSerializer):
+
+#     sellers = serializers.StringRelatedField(many=True, read_only=True)
+
+#     class Meta:
+#         model = Market
+#         fields = ['name', 'url', 'location', 'description', 'net_worth', 'sellers']
+
+
+
+# Additional solution for using Hyperlinks, but also rendering their names
 
 # class MarketSerializer(serializers.ModelSerializer):
 
@@ -77,6 +103,7 @@ class MarketSerializer(serializers.ModelSerializer):
 #             }
 #             for seller in obj.sellers.all()
 #         ]
+
 
 
 # this MarketSerializer allows hyperlinked Name in Frontend:

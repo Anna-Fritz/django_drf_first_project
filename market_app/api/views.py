@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import MarketSerializer, SellerDetailSerializer, \
     SellerCreateSerializer, ProductDetailSerializer, ProductCreateSerializer, SellerSerializer, \
-    MarketHyperlinkedSerializer, ProductSerializer
+    MarketHyperlinkedSerializer, ProductSerializer, ProductHyperlinkedSerializer
 from market_app.models import Market, Seller, Product
 from django.shortcuts import redirect
 
@@ -84,11 +84,11 @@ def products_view(request):
 
     if request.method == 'GET':
         products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True, context={'request': request})
+        serializer = ProductHyperlinkedSerializer(products, many=True, context={'request': request})
         return Response(serializer.data)
     
     if request.method == 'POST':
-        serializer = ProductSerializer(data=request.data, context={'request': request})
+        serializer = ProductHyperlinkedSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -105,12 +105,12 @@ def product_single_view(request, pk):
             serializer = ProductSerializer(product, context={'request': request})
             return Response(serializer.data)
         except Exception:
-            return Response({"message": "Product not found"})
+            return Response({"message": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
             # return redirect('/api/product/')
     
     if request.method == 'PUT':
         product = Product.objects.get(pk=pk)
-        serializer = ProductSerializer(product, data=request.data, partial=True)
+        serializer = ProductHyperlinkedSerializer(product, data=request.data, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -119,6 +119,6 @@ def product_single_view(request, pk):
     
     if request.method == 'DELETE':
         product = Product.objects.get(pk=pk)
-        serializer = ProductSerializer(product)
+        serializer = ProductHyperlinkedSerializer(product, context={'request': request})
         product.delete()
         return Response(serializer.data)

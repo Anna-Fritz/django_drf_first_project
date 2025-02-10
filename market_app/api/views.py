@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import MarketSerializer, SellerDetailSerializer, \
     SellerCreateSerializer, ProductDetailSerializer, ProductCreateSerializer, SellerSerializer, \
-    MarketHyperlinkedSerializer
+    MarketHyperlinkedSerializer, ProductSerializer
 from market_app.models import Market, Seller, Product
 from django.shortcuts import redirect
 
@@ -84,11 +84,11 @@ def products_view(request):
 
     if request.method == 'GET':
         products = Product.objects.all()
-        serializer = ProductDetailSerializer(products, many=True, context={'request': request})
+        serializer = ProductSerializer(products, many=True, context={'request': request})
         return Response(serializer.data)
     
     if request.method == 'POST':
-        serializer = ProductCreateSerializer(data=request.data)
+        serializer = ProductSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -102,7 +102,7 @@ def product_single_view(request, pk):
     if request.method == 'GET':
         try:
             product = Product.objects.get(pk=pk)
-            serializer = ProductDetailSerializer(product, context={'request': request})
+            serializer = ProductSerializer(product, context={'request': request})
             return Response(serializer.data)
         except Exception:
             return Response({"message": "Product not found"})
@@ -110,7 +110,7 @@ def product_single_view(request, pk):
     
     if request.method == 'PUT':
         product = Product.objects.get(pk=pk)
-        serializer = ProductCreateSerializer(product, data=request.data, partial=True)
+        serializer = ProductSerializer(product, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -119,6 +119,6 @@ def product_single_view(request, pk):
     
     if request.method == 'DELETE':
         product = Product.objects.get(pk=pk)
-        serializer = ProductDetailSerializer(product)
+        serializer = ProductSerializer(product)
         product.delete()
         return Response(serializer.data)

@@ -6,6 +6,22 @@ from .serializers import MarketSerializer, SellerDetailSerializer, \
     MarketHyperlinkedSerializer, ProductSerializer, ProductHyperlinkedSerializer
 from market_app.models import Market, Seller, Product
 from django.shortcuts import redirect
+from rest_framework.views import APIView
+from rest_framework import mixins
+from rest_framework import generics
+
+
+class MarketsView(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  generics.GenericAPIView):
+    queryset = Market.objects.all()
+    serializer_class = MarketSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 @api_view(['GET', 'POST'])

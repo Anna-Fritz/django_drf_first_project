@@ -11,17 +11,23 @@ from rest_framework import mixins
 from rest_framework import generics
 
 
-class MarketsView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  generics.GenericAPIView):
+class MarketsView(generics.ListAPIView):
     queryset = Market.objects.all()
     serializer_class = MarketSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+
+""" generic class-based views: GenericAPIView with Mixins"""
+# class MarketsView(mixins.ListModelMixin,
+#                   mixins.CreateModelMixin,
+#                   generics.GenericAPIView):
+#     queryset = Market.objects.all()
+#     serializer_class = MarketSerializer
+
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
     
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
 
 
 @api_view(['GET', 'POST'])
@@ -45,6 +51,25 @@ def markets_view(request):
         #     return Response({"your_message": msg}, status=status.HTTP_201_CREATED)
         # except Exception:
         #     return Response({"message": "error"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MarketSingleView(mixins.RetrieveModelMixin,
+                       mixins.UpdateModelMixin,
+                       mixins.DestroyModelMixin,
+                       generics.GenericAPIView):
+    queryset = Market.objects.all()
+    serializer_class = MarketSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
 
 @api_view(['GET', 'DELETE', 'PUT'])
 def market_single_view(request, pk):

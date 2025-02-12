@@ -150,32 +150,45 @@ def seller_single_view(request, pk):
         serializer = SellerSerializer(seller, context={'request': request})
         return Response(serializer.data)
 
+""" ModelViewSet for all CRUD operations """
+# class ProductViewSet(viewsets.ModelViewSet):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
 
-class ProductViewSet(viewsets.ViewSet):
+
+""" viewsets.GenericViewSet & Mixins for custom CRUD operations """
+class ProductViewSet(mixins.ListModelMixin,
+                     mixins.RetrieveModelMixin,
+                     viewsets.GenericViewSet):
     queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
-    def list(self, request):
-        serializer = ProductSerializer(self.queryset, many=True)
-        return Response(serializer.data)
 
-    def retrieve(self, request, pk=None):
-        user = get_object_or_404(self.queryset, pk=pk)
-        serializer = ProductSerializer(user)
-        return Response(serializer.data)
+# class ProductViewSet(viewsets.ViewSet):
+#     queryset = Product.objects.all()
 
-    def create(self, request):
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+#     def list(self, request):
+#         serializer = ProductSerializer(self.queryset, many=True)
+#         return Response(serializer.data)
 
-    def destroy(self, request, pk=None):
-        product = get_object_or_404(self.queryset, pk=pk)
-        serializer = ProductSerializer(product)
-        product.delete()
-        return Response(serializer.data)
+#     def retrieve(self, request, pk=None):
+#         user = get_object_or_404(self.queryset, pk=pk)
+#         serializer = ProductSerializer(user)
+#         return Response(serializer.data)
+
+#     def create(self, request):
+#         serializer = ProductSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         else:
+#             return Response(serializer.errors)
+
+#     def destroy(self, request, pk=None):
+#         product = get_object_or_404(self.queryset, pk=pk)
+#         serializer = ProductSerializer(product)
+#         product.delete()
+#         return Response(serializer.data)
 
 
 @api_view(['GET', 'POST'])

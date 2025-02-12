@@ -53,6 +53,15 @@ def markets_view(request):
         #     return Response({"message": "error"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class SellerOfMarketList(generics.ListAPIView):
+    serializer_class = SellerSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        market = Market.objects.get(pk=pk)
+        return market.sellers.all()
+
+
 class MarketSingleView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Market.objects.all()
     serializer_class = MarketSerializer

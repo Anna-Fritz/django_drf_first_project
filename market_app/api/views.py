@@ -53,22 +53,27 @@ def markets_view(request):
         #     return Response({"message": "error"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MarketSingleView(mixins.RetrieveModelMixin,
-                       mixins.UpdateModelMixin,
-                       mixins.DestroyModelMixin,
-                       generics.GenericAPIView):
+class MarketSingleView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Market.objects.all()
     serializer_class = MarketSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
 
-    def put(self, request, *args, **kwargs):
-        kwargs['partial'] = True
-        return self.update(request, *args, **kwargs)
+# class MarketSingleView(mixins.RetrieveModelMixin,
+#                        mixins.UpdateModelMixin,
+#                        mixins.DestroyModelMixin,
+#                        generics.GenericAPIView):
+#     queryset = Market.objects.all()
+#     serializer_class = MarketSerializer
 
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+#     def get(self, request, *args, **kwargs):
+#         return self.retrieve(request, *args, **kwargs)
+
+#     def put(self, request, *args, **kwargs):
+#         kwargs['partial'] = True
+#         return self.update(request, *args, **kwargs)
+
+#     def delete(self, request, *args, **kwargs):
+#         return self.destroy(request, *args, **kwargs)
 
 
 @api_view(['GET', 'DELETE', 'PUT'])

@@ -126,6 +126,18 @@ def market_single_view(request, pk):
         return Response(serializer.data)
 
 
+class SellerViewSet(viewsets.ModelViewSet):
+    queryset = Seller.objects.all()
+    serializer_class = SellerSerializer
+
+
+class SellersView(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  generics.GenericAPIView):
+    queryset = Seller.objects.all()
+    serializer_class = SellerSerializer
+
+
 @api_view(['GET', 'POST'])
 def sellers_view(request):
 
@@ -141,7 +153,12 @@ def sellers_view(request):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
-        
+
+
+class SellerSingleView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Seller.objects.all()
+    serializer_class = SellerSerializer
+
 
 @api_view()
 def seller_single_view(request, pk):
@@ -149,6 +166,7 @@ def seller_single_view(request, pk):
         seller = Seller.objects.get(pk=pk)
         serializer = SellerSerializer(seller, context={'request': request})
         return Response(serializer.data)
+
 
 """ ModelViewSet for all CRUD operations """
 # class ProductViewSet(viewsets.ModelViewSet):

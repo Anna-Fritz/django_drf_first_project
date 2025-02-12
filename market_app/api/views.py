@@ -10,6 +10,9 @@ from rest_framework.views import APIView
 from rest_framework import mixins
 from rest_framework import generics
 
+from django.shortcuts import get_object_or_404
+from rest_framework import viewsets
+
 
 class MarketsView(generics.ListAPIView):
     queryset = Market.objects.all()
@@ -62,7 +65,7 @@ def markets_view(request):
 #         return market.sellers.all()
 
 
-class SellerOfMarketList(generics.ListAPIView):
+class SellerOfMarketList(generics.ListCreateAPIView):
     serializer_class = SellerListSerializer
 
     def get_queryset(self):
@@ -70,6 +73,10 @@ class SellerOfMarketList(generics.ListAPIView):
         market = Market.objects.get(pk=pk)
         return market.sellers.all()
 
+    def perform_create(self, serializer):
+        pk = self.kwargs.get('pk')
+        market = Market.objects.get(pk=pk)
+        serializer.save(markets=[market])
 
 
 class MarketSingleView(generics.RetrieveUpdateDestroyAPIView):
@@ -141,6 +148,19 @@ def seller_single_view(request, pk):
     if request.method == 'GET':
         seller = Seller.objects.get(pk=pk)
         serializer = SellerSerializer(seller, context={'request': request})
+        return Response(serializer.data)
+
+
+class ProductViewSet(viewsets.ViewSet):
+    queryset = Product.objects.all()
+
+    def list(self, request):
+        serializer = ProductSerializer(self.queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        user = get_object_or_404(self.queryset, pk=pk)
+        serializer = ProductSerializer(user)
         return Response(serializer.data)
 
 

@@ -203,15 +203,15 @@ class SellerCreateSerializer(serializers.Serializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     # only name of market & seller
-    # market = serializers.StringRelatedField()
-    # seller = serializers.StringRelatedField()
+    market = serializers.StringRelatedField()
+    seller = serializers.StringRelatedField()
 
     # all model information of market & seller
     # market = MarketSerializer(read_only=True)
     # seller = SellerSerializer(read_only=True)
 
-    market = serializers.SerializerMethodField()
-    seller = serializers.SerializerMethodField()
+    # market = serializers.SerializerMethodField()
+    # seller = serializers.SerializerMethodField()
 
     market_id = serializers.PrimaryKeyRelatedField(
         queryset=Market.objects.all(),
@@ -229,25 +229,25 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['id', 'name', 'description', 'price', 'market', 'seller', 'market_id', 'seller_id']
 
-    def get_seller(self, obj):
-        """ returns the seller as a dictionary with name and URL """
-        request = self.context.get('request')  # Wichtig für absolute URLs
-        if obj.seller:
-            return {
-                "name": obj.seller.name,
-                "url": request.build_absolute_uri(reverse("seller-detail", args=[obj.seller.id]))
-            }
-        return None
+    # def get_seller(self, obj):
+    #     """ returns the seller as a dictionary with name and URL """
+    #     request = self.context.get('request')  # Wichtig für absolute URLs
+    #     if obj.seller:
+    #         return {
+    #             "name": obj.seller.name,
+    #             "url": request.build_absolute_uri(reverse("seller-detail", args=[obj.seller.id]))
+    #         }
+    #     return None
 
-    def get_market(self, obj):
-        """ returns the seller as a dictionary with name and URL """
-        request = self.context.get('request')  # Wichtig für absolute URLs
-        if obj.market:
-            return {
-                "name": obj.market.name,
-                "url": request.build_absolute_uri(reverse("market-detail", args=[obj.market.id]))
-            }
-        return None
+    # def get_market(self, obj):
+    #     """ returns the seller as a dictionary with name and URL """
+    #     request = self.context.get('request')  # Wichtig für absolute URLs
+    #     if obj.market:
+    #         return {
+    #             "name": obj.market.name,
+    #             "url": request.build_absolute_uri(reverse("market-detail", args=[obj.market.id]))
+    #         }
+    #     return None
 
 
 class ProductHyperlinkedSerializer(serializers.HyperlinkedModelSerializer):

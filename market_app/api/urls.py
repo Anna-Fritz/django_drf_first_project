@@ -7,7 +7,7 @@ urlpatterns = [
     path('market/<int:pk>/', MarketSingleView.as_view(), name='market-detail'),
     path('market/<int:pk>/sellers/', SellerOfMarketList.as_view(), name='market-detail'),
     path('seller/', sellers_view),
-    path('seller/<int:pk>/', seller_single_view, name='seller_single'),
+    path('seller/<int:pk>/', seller_single_view, name='seller-detail'),
     path('product/', products_view),
     path('product/<int:pk>/', product_single_view, name='product-detail')
 ]

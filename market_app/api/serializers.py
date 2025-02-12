@@ -54,7 +54,7 @@ def validate_no_x(value):       # usually validation of a serializer is outsourc
 
 class MarketSerializer(serializers.ModelSerializer):
 
-    sellers = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='seller_single')
+    sellers = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='seller-detail')
 
     class Meta:
         model = Market
@@ -121,7 +121,7 @@ class MarketHyperlinkedSerializer(MarketSerializer, serializers.HyperlinkedModel
 #         return [
 #             {
 #                 "name": seller.name,
-#                 "url": request.build_absolute_uri(reverse("seller_single", args=[seller.id]))
+#                 "url": request.build_absolute_uri(reverse("seller-detail", args=[seller.id]))
 #             }
 #             for seller in obj.sellers.all()
 #         ]
@@ -141,7 +141,7 @@ class MarketHyperlinkedSerializer(MarketSerializer, serializers.HyperlinkedModel
 #     def get_sellers(self, obj):
 #         request = self.context.get('request')  # Request-Objekt for absolute URLs
 #         return [
-#             f'<a href="{request.build_absolute_uri(reverse("seller_single", args=[seller.id]))}">{seller.name}</a>'
+#             f'<a href="{request.build_absolute_uri(reverse("seller-detail", args=[seller.id]))}">{seller.name}</a>'
 #             for seller in obj.sellers.all()
 #         ]
 
@@ -163,6 +163,12 @@ class SellerSerializer(serializers.ModelSerializer):
 
     def get_market_count(self, obj):
         return obj.markets.count()
+
+
+class SellerListSerializer(SellerSerializer, serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Seller
+        fields = ['url', 'name', 'market_id', 'market_count', 'contact_info']
 
 
 # The SellerSerializer replaces both SellerDetailSerializer and SellerCreateSerializer \
@@ -229,7 +235,7 @@ class ProductSerializer(serializers.ModelSerializer):
         if obj.seller:
             return {
                 "name": obj.seller.name,
-                "url": request.build_absolute_uri(reverse("seller_single", args=[obj.seller.id]))
+                "url": request.build_absolute_uri(reverse("seller-detail", args=[obj.seller.id]))
             }
         return None
 
